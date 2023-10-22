@@ -1,43 +1,378 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
     />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+    <style>
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>React App</title>
+      th,
+      td {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+
+      .icon-action {
+        font-size: 20px;
+        cursor: pointer;
+      }
+
+      .icon-action + .icon-action {
+        margin-left: 10px;
+      }
+
+      .button-33 {
+        background-color: #c2fbd7;
+        border-radius: 100px;
+        box-shadow: rgba(44, 187, 99, 0.2) 0 -25px 18px -14px inset,
+          rgba(44, 187, 99, 0.15) 0 1px 2px, rgba(44, 187, 99, 0.15) 0 2px 4px,
+          rgba(44, 187, 99, 0.15) 0 4px 8px, rgba(44, 187, 99, 0.15) 0 8px 16px,
+          rgba(44, 187, 99, 0.15) 0 16px 32px;
+        color: white;
+        cursor: pointer;
+        display: inline-block;
+        font-family: CerebriSans-Regular, -apple-system, system-ui, Roboto,
+          sans-serif;
+        padding: 7px 20px;
+        text-align: center;
+        text-decoration: none;
+        transition: all 250ms;
+        border: 0;
+        font-size: 16px;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+      }
+
+      .button-33:hover {
+        box-shadow: rgba(44, 187, 99, 0.35) 0 -25px 18px -14px inset,
+          rgba(44, 187, 99, 0.25) 0 1px 2px, rgba(44, 187, 99, 0.25) 0 2px 4px,
+          rgba(44, 187, 99, 0.25) 0 4px 8px, rgba(44, 187, 99, 0.25) 0 8px 16px,
+          rgba(44, 187, 99, 0.25) 0 16px 32px;
+        transform: scale(1.05) rotate(-1deg);
+      }
+
+      .available {
+        background-color: green !important;
+      }
+
+      .unavailable {
+        background-color: red !important;
+      }
+
+      .tag-button {
+        background-color: #17a2b8 !important;
+        color: white;
+        border: none;
+        border-radius: 20px;
+        padding: 3px 10px;
+        margin-top: 2px;
+        margin-right: 2px;
+      }
+    </style>
   </head>
+
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+    <div class="container">
+      <div class="filter-container mb-4">
+        <h2 for="filter">Filter :</h2>
+        <select id="filter" class="form-control">
+          <optgroup label="Availability">
+            <option value="all">All</option>
+            <option value="available">Available</option>
+            <option value="unavailable">Unavailable</option>
+          </optgroup>
+          <optgroup label="Brand">
+            <option value="Apple">Apple</option>
+            <option value="Dell">Dell</option>
+            <option value="Samsung">Samsung</option>
+          </optgroup>
+          <optgroup label="Distributor">
+            <option value="Tech Haven Electronics">
+              Tech Haven Electronics
+            </option>
+            <option value="Gizmo Galaxy">Gizmo Galaxy</option>
+            <option value="ElectroWorld Superstore">
+              ElectroWorld Superstore
+            </option>
+            <option value="Digital Dreams Electronics">
+              Digital Dreams Electronics
+            </option>
+            <option value="PowerTech Electronics">PowerTech Electronics</option>
+          </optgroup>
+        </select>
+      </div>
+      <h1 for="table">Table :</h1>
+      <table class="table table-striped table-bordered">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Brand</th>
+            <th>Manufactured Date</th>
+            <th>Product Tags</th>
+            <th>Distributors</th>
+            <th>Status of Availability</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+    <script>
+      const apiData = [
+        {
+          product: {
+            image:
+              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR9Y3nei0znpHaRMkbJilpreY1ZAOyJ8zb4Lhx5cNlucQ&s",
+            name: "Smartphone",
+            tags: ["#MobileTech", "#Apple", "#Smartphone"],
+          },
+          brand: "Apple",
+          manufacturedDate: "15/Oct/19",
+          distributors: [
+            "Tech Haven Electronics",
+            "Gizmo Galaxy",
+            "PowerTech Electronics",
+          ],
+          availability: "available",
+        },
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+        {
+          product: {
+            image:
+              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTviaM3S3LZy-0XjP_uEE6_QPF9NHjxghZ5FKBQcdCG2A&s",
+            name: "Laptop",
+            tags: ["#Laptop", "#Dell", "#Tech"],
+          },
+          brand: "Dell",
+          manufacturedDate: "20/Oct/23",
+          distributors: [
+            "Digital Dreams Electronics",
+            "ElectroWorld Superstore",
+          ],
+          availability: "unavailable",
+        },
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
+        {
+          product: {
+            image:
+              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSsLaD-U77qspK7hwaUCOnoegXav99UfsIQyStoaYHdtg&s",
+            name: "Smart TV",
+            tags: ["#SmartTV", "#Samsung", "#Entertainment"],
+          },
+          brand: "Samsung",
+          manufacturedDate: "10/Oct/2023",
+          distributors: [
+            "Tech Haven Electronics",
+            "PowerTech Electronics",
+            "ElectroWorld Superstore",
+          ],
+          availability: "available",
+        },
+
+        {
+          product: {
+            image:
+              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsKzLGvM9xabBEde_p5xiLOVCpTv6L3TLOcExJjuBysQ&s",
+            name: "Tablet",
+            tags: ["#Tablet", "#Apple", "#Gadget"],
+          },
+          brand: "Apple",
+          manufacturedDate: "05/Apr/2023",
+          distributors: [
+            "Digital Dreams Electronics",
+            "Gizmo Galaxy",
+            "PowerTech Electronics",
+          ],
+          availability: "available",
+        },
+
+        {
+          product: {
+            image:
+              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQR6t3YEovUjCux5nsDNo0Kp2dXimdiT4HPg92PLmlX_g&s",
+            name: "Camera",
+            tags: ["#Camera", "#Samsung", "#Photography"],
+          },
+          brand: "Samsung",
+          manufacturedDate: "20/Dec/2022",
+          distributors: ["Tech Haven Electronics", "PowerTech Electronics"],
+          availability: "available",
+        },
+
+        {
+          product: {
+            image:
+              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgVH4a0n5X3yJGNfx4z2HhxI8KkijAjTjPxPv1XWi5ZA&s",
+            name: "Smartwatch",
+            tags: ["#Smartwatch", "#Dell", "#Fitness"],
+          },
+          brand: "Dell",
+          manufacturedDate: "24/Feb/2022",
+          distributors: ["Tech Haven Electronics", "Gizmo Galaxy"],
+          availability: "available",
+        },
+
+        {
+          product: {
+            image:
+              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHIipA5rPSQieCj0BJp1YDzQuagdFbSw4IEIQkTkAmxg&s",
+            name: "Gaming Console",
+            tags: ["#Gaming", "#Samsung", "#Console"],
+          },
+          brand: "Samsung",
+          manufacturedDate: "28/Oct/21",
+          distributors: ["ElectroWorld Superstore", "Tech Haven Electronics"],
+          availability: "available",
+        },
+
+        {
+          product: {
+            image:
+              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToF828f-Ejk5Y9WBi7lA17-KmN7K5Lu0C37iUR0kx3wQ&s",
+            name: "Wireless Earbuds",
+            tags: [" #Earbuds", "#Apple", "#Audio"],
+          },
+          brand: "Apple",
+          manufacturedDate: "10/Oct/20",
+          distributors: ["PowerTech Electronics", "ElectroWorld Superstore"],
+          availability: "available",
+        },
+
+        {
+          product: {
+            image:
+              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuwMAMau6AWAX3JyiUnSKGGnHMPOyXn3UveX7jA4CVBw&s",
+            name: "E-reader",
+            tags: ["#EReader", "#Books"],
+          },
+          brand: "Dell",
+          manufacturedDate: "15/jan/23",
+          distributors: [
+            "PowerTech Electronics",
+            "Digital Dreams Electronics",
+            "ElectroWorld Superstore",
+          ],
+          availability: "unavailable",
+        },
+
+        {
+          product: {
+            image:
+              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYL0xVH3YeO4o5_S1vkl5J4-dp3XW14ZQ8tWrS78gkjQ&s",
+            name: "Wireless Router",
+            tags: ["#Router", "#Dell", "#Connectivity"],
+          },
+          brand: "Dell",
+          manufacturedDate: "18/jun/22",
+          distributors: [
+            "Gizmo Galaxy",
+            "ElectroWorld Superstore",
+            "Digital Dreams Electronics",
+          ],
+          availability: "available",
+        },
+      ];
+
+      function populateTable(selectedFilter) {
+        const tableBody = document.getElementById("table-body");
+        tableBody.innerHTML = "";
+        apiData.forEach((item) => {
+          if (
+            selectedFilter === "all" ||
+            selectedFilter === item.availability ||
+            selectedFilter === item.brand ||
+            item.distributors.includes(selectedFilter)
+          ) {
+            const row = document.createElement("tr");
+            const productCell = document.createElement("td");
+            const productImage = document.createElement("img");
+            productImage.src = item.product.image;
+            productImage.alt = "Product Image";
+            productImage.width = 100;
+            const productName = document.createElement("p");
+            productName.innerHTML = `<strong>${item.product.name}</strong>`;
+            productCell.appendChild(productImage);
+            productCell.appendChild(productName);
+            const brandCell = document.createElement("td");
+            brandCell.textContent = item.brand;
+            const manufacturedDateCell = document.createElement("td");
+            manufacturedDateCell.textContent = item.manufacturedDate;
+            const productTagsCell = document.createElement("td");
+            item.product.tags.forEach((tag) => {
+              const tagButton = document.createElement("button");
+              tagButton.className = "btn tag-button";
+              tagButton.textContent = tag;
+              productTagsCell.appendChild(tagButton);
+            });
+            const distributorsCell = document.createElement("td");
+            distributorsCell.textContent = item.distributors.join(", ");
+            const availabilityCell = document.createElement("td");
+            const availabilityButton = document.createElement("button");
+            availabilityButton.className = `btn button-33 ${
+              item.availability === "available" ? "available" : "unavailable"
+            }`;
+            availabilityButton.textContent = item.availability;
+            availabilityCell.appendChild(availabilityButton);
+            const actionsCell = document.createElement("td");
+            const editIcon = document.createElement("i");
+            editIcon.className = "fas fa-edit icon-action";
+            const deleteIcon = document.createElement("i");
+            deleteIcon.className = "fas fa-trash icon-action";
+            actionsCell.appendChild(editIcon);
+            actionsCell.appendChild(deleteIcon);
+            row.appendChild(productCell);
+            row.appendChild(brandCell);
+            row.appendChild(manufacturedDateCell);
+            row.appendChild(productTagsCell);
+            row.appendChild(distributorsCell);
+            row.appendChild(availabilityCell);
+            row.appendChild(actionsCell);
+            tableBody.appendChild(row);
+          }
+        });
+      }
+
+      populateTable("all");
+      const filter = document.getElementById("filter");
+      filter.addEventListener("change", function () {
+        const selectedFilter = filter.value;
+        populateTable(selectedFilter);
+      });
+      const tableBody = document.getElementById("table-body");
+      tableBody.addEventListener("click", function (e) {
+        if (e.target.classList.contains("fa-edit")) {
+          const productName = e.target
+            .closest("tr")
+            .querySelector("strong").textContent;
+          alert(`Editing ${productName}`);
+        } else if (e.target.classList.contains("fa-trash")) {
+          const productName = e.target
+            .closest("tr")
+            .querySelector("strong").textContent;
+          if (confirm(`Are you sure you want to delete ${productName}?`)) {
+            tableBody.removeChild(e.target.closest("tr"));
+          }
+        }
+      });
+    </script>
   </body>
 </html>
